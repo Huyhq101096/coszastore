@@ -15,19 +15,20 @@ public class HomeService {
     @Autowired
     private CategoryRepository categoryRepository;
     public List<CategoryResponse> getAllCategory() {
-        // get data from database
-        List<CategoryEntity> list = categoryRepository.findAll();
-
-        // give data for FE
-        List<CategoryResponse> responseList = new ArrayList<>();
-        for(CategoryEntity categoryEntity: list) {
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setId(categoryEntity.getId());
-            categoryResponse.setName(categoryEntity.getName());
-            responseList.add(categoryResponse);
-
-        }
-
-        return responseList;
+//        // get data from database
+//        List<CategoryEntity> list = categoryRepository.findAll();
+//
+//        // give data for FE
+//        List<CategoryResponse> responseList = new ArrayList<>();
+//        for(CategoryEntity categoryEntity: list) {
+//            CategoryResponse categoryResponse = new CategoryResponse();
+//            categoryResponse.setId(categoryEntity.getId());
+//            categoryResponse.setName(categoryEntity.getName());
+//            responseList.add(categoryResponse);
+//
+//        }
+//
+//        return responseList;
+        return null;
     }
 }
