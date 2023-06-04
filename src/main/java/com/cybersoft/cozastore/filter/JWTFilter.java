@@ -31,7 +31,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
        // Lấy giá trị trên header
         String header = request.getHeader("Authorization");
-        System.out.println(header);
+//        System.out.println(header);
 
         try {
             String token = header.substring(7);
