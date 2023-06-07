@@ -1,6 +1,10 @@
 package com.cybersoft.cozastore.service;
 
+import com.cybersoft.cozastore.entity.CategoryEntity;
+import com.cybersoft.cozastore.entity.ColorEntity;
 import com.cybersoft.cozastore.entity.ProductEntity;
+import com.cybersoft.cozastore.entity.SizeEntity;
+import com.cybersoft.cozastore.payload.request.ProductRequest;
 import com.cybersoft.cozastore.payload.response.ProductResponse;
 import com.cybersoft.cozastore.repository.ProductRepository;
 import com.cybersoft.cozastore.service.impl.IProductService;
@@ -28,5 +32,36 @@ public class ProductService implements IProductService {
             productResponsesList.add(productResponse);
         }
         return productResponsesList;
+    }
+
+    @Override
+    public boolean addProduct(ProductRequest productRequest) {
+
+        try {
+            ProductEntity productEntity = new ProductEntity();
+            productEntity.setName(productRequest.getName());
+            productEntity.setImage(productEntity.getImage());
+            productEntity.setPrice(productRequest.getPrice());
+            productEntity.setQuantity(productRequest.getQuantity());
+
+            ColorEntity colorEntity = new ColorEntity();
+            colorEntity.setId(productRequest.getColorId());
+
+            SizeEntity sizeEntity = new SizeEntity();
+            sizeEntity.setId(productRequest.getSizeId());
+
+            CategoryEntity categoryEntity = new CategoryEntity();
+            categoryEntity.setId(productRequest.getCategoryId());
+
+            productEntity.setColor(colorEntity);
+            productEntity.setSize(sizeEntity);
+            productEntity.setCategory(categoryEntity);
+
+            productRepository.save(productEntity);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 }
