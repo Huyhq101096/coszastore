@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/home/**").permitAll()
+                .antMatchers("/product/file/**").permitAll()
                 .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
