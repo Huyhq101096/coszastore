@@ -9,6 +9,7 @@ import com.cybersoft.cozastore.payload.response.ProductResponse;
 import com.cybersoft.cozastore.repository.ProductRepository;
 import com.cybersoft.cozastore.service.impl.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,13 +21,16 @@ public class ProductService implements IProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Value("${host.name}")
+    private String hostName;
+
     @Override
-    public List<ProductResponse> getProductByCategoryId(int id) {
+    public List<ProductResponse> getProductByCategoryId(int id,String hostName) {
         List<ProductEntity> list = productRepository.findByCategoryId(id);
         List<ProductResponse> productResponsesList = new ArrayList<>();
         for (ProductEntity product : list) {
             ProductResponse productResponse = new ProductResponse();
-            productResponse.setImage(product.getImage());
+            productResponse.setImage("http://" + hostName + "/product/file/" + product.getImage());
             productResponse.setName(product.getName());
             productResponse.setPrice(product.getPrice());
             productResponsesList.add(productResponse);
@@ -37,10 +41,11 @@ public class ProductService implements IProductService {
     @Override
     public boolean addProduct(ProductRequest productRequest) {
 
+
         try {
             ProductEntity productEntity = new ProductEntity();
             productEntity.setName(productRequest.getName());
-            productEntity.setImage(productEntity.getImage());
+            productEntity.setImage(productRequest.getFile().getOriginalFilename());
             productEntity.setPrice(productRequest.getPrice());
             productEntity.setQuantity(productRequest.getQuantity());
 

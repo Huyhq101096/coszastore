@@ -18,6 +18,7 @@ public class ProductRequest {
     @DecimalMin(value = "0.1")
     private double price;
 
+
     private String desc;
     private int quantity;
     private int sizeId;
