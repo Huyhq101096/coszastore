@@ -5,6 +5,9 @@ import com.cybersoft.cozastore.payload.request.SignUpRequest;
 import com.cybersoft.cozastore.payload.response.BaseResponse;
 import com.cybersoft.cozastore.service.LoginService;
 import com.cybersoft.cozastore.utils.JWTHelperUtils;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 // allow other domain call this API
 @CrossOrigin
 public class LoginController {
+
+    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private Gson gson = new Gson();
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -48,6 +54,9 @@ public class LoginController {
         BaseResponse response = new BaseResponse();
         response.setMessage(isSuccess ? "Thêm thành công" : "Thêm thất bại" );
         response.setData(isSuccess);
+
+        String data = gson.toJson(response);
+        logger.info(data);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }

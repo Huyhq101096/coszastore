@@ -48,6 +48,7 @@ public class ProductService implements IProductService {
             productEntity.setImage(productRequest.getFile().getOriginalFilename());
             productEntity.setPrice(productRequest.getPrice());
             productEntity.setQuantity(productRequest.getQuantity());
+            productEntity.setDescription(productRequest.getDesc());
 
             ColorEntity colorEntity = new ColorEntity();
             colorEntity.setId(productRequest.getColorId());

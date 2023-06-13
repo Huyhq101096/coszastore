@@ -4,6 +4,8 @@ import com.cybersoft.cozastore.exception.FileNotFoundException;
 import com.cybersoft.cozastore.payload.request.ProductRequest;
 import com.cybersoft.cozastore.payload.response.BaseResponse;
 import com.cybersoft.cozastore.service.impl.IProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -30,15 +32,25 @@ public class ProductController {
     @Autowired
     private IProductService iProductService;
 
+    Logger logger = LoggerFactory.getLogger(ProductController.class);
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductByCategoryId(
             HttpServletRequest request,
             @PathVariable("id") int id) {
+
+        logger.trace("Hello trace logger");
+        logger.debug("Hello debug logger");
+        logger.info("Hello info logger");
+        logger.warn("Hello warn logger");
+        logger.trace("Hello error logger");
+
+
         String hostName = request.getHeader("host");
-        System.out.println(request.getHeader("host"));
-        System.out.println(request.getProtocol());
-        System.out.println(request.getContextPath());
+//        System.out.println(request.getHeader("host"));
+//        System.out.println(request.getProtocol());
+//        System.out.println(request.getContextPath());
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setData(iProductService.getProductByCategoryId(id,hostName));
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);

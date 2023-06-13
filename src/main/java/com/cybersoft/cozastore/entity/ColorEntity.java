@@ -1,5 +1,8 @@
 package com.cybersoft.cozastore.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Set;
 
