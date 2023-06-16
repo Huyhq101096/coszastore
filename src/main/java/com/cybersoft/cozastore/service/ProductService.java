@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService implements IProductService {
@@ -30,12 +31,29 @@ public class ProductService implements IProductService {
         List<ProductResponse> productResponsesList = new ArrayList<>();
         for (ProductEntity product : list) {
             ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(product.getId());
             productResponse.setImage("http://" + hostName + "/product/file/" + product.getImage());
             productResponse.setName(product.getName());
             productResponse.setPrice(product.getPrice());
+            productResponse.setDescription(product.getDescription());
             productResponsesList.add(productResponse);
+
         }
         return productResponsesList;
+    }
+
+    @Override
+    public ProductResponse getDetailProduct(int id) {
+        Optional<ProductEntity> product = productRepository.findById(id);
+        ProductResponse productResponse = new ProductResponse();
+        if(product.isPresent()) {
+            productResponse.setId(product.get().getId());
+            productResponse.setImage(product.get().getImage());
+            productResponse.setName(product.get().getName());
+            productResponse.setPrice(product.get().getPrice());
+            productResponse.setDescription(product.get().getDescription());
+        }
+        return productResponse;
     }
 
     @Override

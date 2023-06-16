@@ -34,8 +34,16 @@ public class ProductController {
 
     Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-
     @GetMapping("/{id}")
+    public ResponseEntity<?> getDetailProduct(@PathVariable int id) {
+        BaseResponse response = new BaseResponse();
+        response.setData(iProductService.getDetailProduct(id));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
+    @GetMapping("/getAllCategory/{id}")
     public ResponseEntity<?> getProductByCategoryId(
             HttpServletRequest request,
             @PathVariable("id") int id) {
@@ -51,9 +59,9 @@ public class ProductController {
 //        System.out.println(request.getHeader("host"));
 //        System.out.println(request.getProtocol());
 //        System.out.println(request.getContextPath());
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(iProductService.getProductByCategoryId(id,hostName));
-        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+        BaseResponse response = new BaseResponse();
+        response.setData(iProductService.getProductByCategoryId(id,hostName));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**

@@ -10,6 +10,8 @@ public interface IProductService {
 
     List<ProductResponse> getProductByCategoryId(int id, String hostName);
 
+    ProductResponse getDetailProduct(int id);
+
     boolean addProduct(ProductRequest productRequest);
 
 }
