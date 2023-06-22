@@ -14,4 +14,6 @@ public interface IProductService {
 
     boolean addProduct(ProductRequest productRequest);
 
+    boolean clearCache();
+
 }

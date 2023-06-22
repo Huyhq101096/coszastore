@@ -31,12 +31,11 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
        // Lấy giá trị trên header
         String header = request.getHeader("Authorization");
-//        System.out.println(header);
-
         try {
             String token = header.substring(7);
             // Kiểm tra token lấy được xem có thể do hệ thống sinh ra hay không.
             String data = jwtHelperUtils.validateToken(token);
+
             if(!data.isEmpty()) {
             // Tạo chứng thực cho Security
                 UsernamePasswordAuthenticationToken authenticationToken =

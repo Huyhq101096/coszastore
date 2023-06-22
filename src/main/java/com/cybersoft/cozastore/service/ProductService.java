@@ -10,6 +10,8 @@ import com.cybersoft.cozastore.repository.ProductRepository;
 import com.cybersoft.cozastore.service.impl.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +28,9 @@ public class ProductService implements IProductService {
     private String hostName;
 
     @Override
+    @Cacheable(value = "getProductByCategoryId")
     public List<ProductResponse> getProductByCategoryId(int id,String hostName) {
+        System.out.println("Kiem tra cache");
         List<ProductEntity> list = productRepository.findByCategoryId(id);
         List<ProductResponse> productResponsesList = new ArrayList<>();
         for (ProductEntity product : list) {
@@ -87,5 +91,11 @@ public class ProductService implements IProductService {
             return false;
         }
 
+    }
+
+    @Override
+    @CacheEvict(value = "getProductByCategoryId", allEntries = true)
+    public boolean clearCache() {
+        return true;
     }
 }
