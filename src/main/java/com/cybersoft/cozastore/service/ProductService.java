@@ -8,12 +8,16 @@ import com.cybersoft.cozastore.payload.request.ProductRequest;
 import com.cybersoft.cozastore.payload.response.ProductResponse;
 import com.cybersoft.cozastore.repository.ProductRepository;
 import com.cybersoft.cozastore.service.impl.IProductService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,25 +28,52 @@ public class ProductService implements IProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    Gson gson = new Gson();
+
     @Value("${host.name}")
     private String hostName;
 
-    @Override
-    @Cacheable(value = "getProductByCategoryId")
-    public List<ProductResponse> getProductByCategoryId(int id,String hostName) {
-        System.out.println("Kiem tra cache");
-        List<ProductEntity> list = productRepository.findByCategoryId(id);
-        List<ProductResponse> productResponsesList = new ArrayList<>();
-        for (ProductEntity product : list) {
-            ProductResponse productResponse = new ProductResponse();
-            productResponse.setId(product.getId());
-            productResponse.setImage("http://" + hostName + "/product/file/" + product.getImage());
-            productResponse.setName(product.getName());
-            productResponse.setPrice(product.getPrice());
-            productResponse.setDescription(product.getDescription());
-            productResponsesList.add(productResponse);
 
+    @Override
+//    @Cacheable(value = "getProductByCategoryId")
+    public List<ProductResponse> getProductByCategoryId(int id, String hostName) {
+        System.out.println("Kiem tra cache");
+        List<ProductResponse> productResponsesList = new ArrayList<>();
+
+        rabbitTemplate.convertAndSend("test exchange01","","Hello exchange01");
+
+        // Lấy dữ liệu trên redis trước . Nếu có thì lấy dữ liệu trên redis . Nếu ko thì query data
+        if (redisTemplate.hasKey("listProduct")) {
+            System.out.println("Redis có dữ liệu");
+            String dataProduct = (String) redisTemplate.opsForValue().get("listProduct");
+            Type listType = new TypeToken<ArrayList<ProductResponse>>(){}.getType();
+            productResponsesList = new Gson().fromJson(dataProduct,listType);
+
+        } else {
+            System.out.println("Redis không có dữ liệu");
+            // Không tồn tại thì query database để lấy dữ liệu.
+            List<ProductEntity> list = productRepository.findByCategoryId(id);
+            for (ProductEntity product : list) {
+                ProductResponse productResponse = new ProductResponse();
+                productResponse.setId(product.getId());
+                productResponse.setImage("http://" + hostName + "/product/file/" + product.getImage());
+                productResponse.setName(product.getName());
+                productResponse.setPrice(product.getPrice());
+                productResponse.setDescription(product.getDescription());
+                productResponsesList.add(productResponse);
+
+            }
         }
+
+        String dataProduct = gson.toJson(productResponsesList);
+        // Lưu trữ dữ liệu lên redis thông qua redistemplate
+        redisTemplate.opsForValue().set("listProduct", dataProduct);
         return productResponsesList;
     }
 
@@ -50,7 +81,7 @@ public class ProductService implements IProductService {
     public ProductResponse getDetailProduct(int id) {
         Optional<ProductEntity> product = productRepository.findById(id);
         ProductResponse productResponse = new ProductResponse();
-        if(product.isPresent()) {
+        if (product.isPresent()) {
             productResponse.setId(product.get().getId());
             productResponse.setImage(product.get().getImage());
             productResponse.setName(product.get().getName());
